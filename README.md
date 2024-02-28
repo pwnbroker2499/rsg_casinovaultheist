@@ -8,22 +8,26 @@ by AndyUK
 - github : https://github.com/RexShack
 - support-me : https://rexshackgaming.tebex.io/package/5114907
 
-# Framework QBCore RedM Edition
-- https://github.com/qbcore-redm-framework
+# Framework RSG RedM Edition
+- https://github.com/Rexshack-RedM/rsg-core
 
 # Dependancies
-- qbr-core : https://github.com/qbcore-redm-framework
-- rsg_alerts : https://github.com/RexShack/rsg_alerts
+- 'rsg-core' -- https://github.com/Rexshack-RedM/rsg-core
+- 'rsg-inventory' -- https://github.com/Rexshack-RedM/rsg-inventory
+- 'rsg-lawmen' -- https://github.com/Rexshack-RedM/rsg-lawman
 
 # Installation
 - ensure that the dependancies are added and started
-- add rsg_rhodesbankheist to your resources folder
-- add items to your "\qbr-core\shared\items.lua"
-- add images to your "\qbr-inventory\html\images"
+- add rsg_casionvaultheist to your resources folder
+- add items to your "\rsg-core\shared\items.lua"
+- add images to your "\rsg-inventory\html\images"
 
 # Starting the resource
-- add the following to your server.cfg file : ensure rsg_rhodesbankheist
+- add the following to your server.cfg file : ensure rsg_casinovaultheist
 
 # Support
 - discord : https://discord.gg/s5uSk56B65
 - email : rexshackuk@gmail.com
+
+
+# QB to RSG translation by PwnBroker
