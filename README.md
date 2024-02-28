@@ -16,6 +16,8 @@ by AndyUK
 - 'rsg-inventory' -- https://github.com/Rexshack-RedM/rsg-inventory
 - 'rsg-lawmen' -- https://github.com/Rexshack-RedM/rsg-lawman
 
+- Note: Uses NotifyV2 from 'rsg-core'
+
 # Installation
 - ensure that the dependancies are added and started
 - add rsg_casionvaultheist to your resources folder
