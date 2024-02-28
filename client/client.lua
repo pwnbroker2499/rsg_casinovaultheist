@@ -1,4 +1,4 @@
-local sharedItems = exports['qbr-core']:GetItems()
+local RSGCore = exports['rsg-core']:GetCoreObjects()
 local initialCooldownSeconds = 3600 -- cooldown time in seconds
 local cooldownSecondsRemaining = 0 -- done to zero cooldown on restart
 local lockpicked = false
@@ -29,13 +29,13 @@ Citizen.CreateThread(function()
 				awayFromObject = false
 				DrawText3Ds(objectPos.x, objectPos.y, objectPos.z + 1.0, "~g~J~w~ - Lockpick")
 				if IsControlJustReleased(0, 0xF3830D8E) then -- [J]
-					exports['qbr-core']:TriggerCallback('QBCore:HasItem', function(hasItem)
+					exports['rsg-core']:TriggerCallback('RSGCore.Functions.HasItem', function(hasItem)
 						if hasItem then
-							TriggerServerEvent('QBCore:Server:RemoveItem', 'lockpick', 1)
-							TriggerEvent("inventory:client:ItemBox", sharedItems['lockpick'], 'remove')
-							TriggerEvent('qbr-lockpick:client:openLockpick', lockpickFinish)
+							TriggerServerEvent('RSGCore:Server:RemoveItem', 'lockpick', 1)
+							TriggerEvent("inventory:client:ItemBox", RSGCore.Shared.Items['lockpick'], 'remove')
+							TriggerEvent('RSGCore.Shared.Items:client:openLockpick', lockpickFinish)
 						else
-							exports['qbr-core']:Notify(9, 'you need a lockpick', 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+							RSGCore.Functions.NotifyV2(9, 'You need a lockpick', 5000, 'top-right', 'error', 'circle-xmark', '#e60000')
 						end
 					end, { ['lockpick'] = 1 })
 				end
@@ -49,11 +49,11 @@ end)
 
 function lockpickFinish(success)
     if success then
-		exports['qbr-core']:Notify(9, 'lockpick successful', 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+		RSGCore.Functions.NotifyV2(9, 'Lockpick Successful', 5000, 'top-right', 'success', 'check', '#16b82f')
 		Citizen.InvokeNative(0x6BAB9442830C7F53, 2058564250, 0)
 		lockpicked = true
     else
-        exports['qbr-core']:Notify(9, 'lockpick unsuccessful', 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        RSGCore.Functions.NotifyV2(9, 'Lockpick Unsuccessful', 5000, 'top-right', 'error', 'circle-xmark', '#e60000')
     end
 end
 
@@ -86,10 +86,10 @@ end)
 RegisterNetEvent('rsg_casinovaultheist:client:boom')
 AddEventHandler('rsg_casinovaultheist:client:boom', function()
 	if cooldownSecondsRemaining == 0 then
-		exports['qbr-core']:TriggerCallback('QBCore:HasItem', function(hasItem)
+		RSGCore.Functions.TriggerCallback('RSGCore.Functions.HasItem', function(hasItem)
 			if hasItem then
-				TriggerServerEvent('QBCore:Server:RemoveItem', 'dynamite', 1)
-				TriggerEvent('inventory:client:ItemBox', sharedItems['dynamite'], 'remove')
+				TriggerServerEvent('RSGCore:Server:RemoveItem', 'dynamite', 1)
+				TriggerEvent('inventory:client:ItemBox', RSGCore.Shared.Items['dynamite'], 'remove')
 				local playerPed = PlayerPedId()
 				TaskStartScenarioInPlace(playerPed, GetHashKey('WORLD_HUMAN_CROUCH_INSPECT'), 5000, true, false, false, false)
 				Citizen.Wait(5000)
@@ -99,30 +99,28 @@ AddEventHandler('rsg_casinovaultheist:client:boom', function()
 				SetEntityHeading(prop, GetEntityHeading(PlayerPedId()))
 				PlaceObjectOnGroundProperly(prop)
 				FreezeEntityPosition(prop,true)
-				exports['qbr-core']:Notify(8, 'Bank Robbery', 10000, 'explosives set, stand well back', 'toast_log_blips', 'blip_robbery_bank', 'COLOR_WHITE')
+				RSGCore.Functions.NotifyV2(8, 'Bank Robbery', 10000, 'Explosives set, stand well back', 5000, 'top-right', 'inform', 'triangle-exclamation', '#FFD43B')
 				Wait(10000)
 				AddExplosion(2868.33, -1401.59, 52.37, 231.39 , 5000.0 ,true , false , 27)
 				DeleteObject(prop)
 				Citizen.InvokeNative(0x6BAB9442830C7F53, 2181772801, 0)
 				TriggerEvent('rsg_casinovaultheist:client:policenpc')
-				local alertcoords = GetEntityCoords(PlayerPedId())
-				local blipname = 'casino robbery'
-				local alertmsg = 'casino robbery in progress'
-				TriggerEvent('rsg_alerts:client:lawmanalert', alertcoords, blipname, alertmsg)
+				local alertmsg = 'Casino robbery in progress'
+				TriggerEvent('rsg-lawman:server:lawmanAlert', alertmsg)
 				handleCooldown()
 			else
-				exports['qbr-core']:Notify(9, 'you need dynamite to do that', 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+				RSGCore.Functions.NotifyV2(9, 'You need Dynamite', 5000, 'top-right', 'error', 'circle-xmark', '#e60000')
 			end
 		end, { ['dynamite'] = 1 })
 	else
-		exports['qbr-core']:Notify(9, 'you can\'t do that right now', 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+		RSGCore.Functions.NotifyV2(9, 'You can\'t do that right now', 5000, 'top-right', 'error', 'circle-xmark', '#e60000')
 	end
 end)
 
 ------------------------------------------------------------------------------------------------------------------------
 
 Citizen.CreateThread(function()
-	exports['qbr-core']:createPrompt('vault1', vector3(2868.33, -1401.59, 52.37), 0xF3830D8E, 'Loot Vault', {
+	RSGCore.Functions.createPrompt('vault1', vector3(2868.33, -1401.59, 52.37), 0xF3830D8E, 'Loot Vault', {
 		type = 'client',
 		event = 'rsg_casinovaultheist:client:checkvault',
 		args = {},
@@ -134,7 +132,7 @@ RegisterNetEvent('rsg_casinovaultheist:client:checkvault', function()
 	local player = PlayerPedId()
 	SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
 	if vault1 == false then
-		exports['qbr-core']:Progressbar("search_vault", "Stealing Gold", 10000, false, true, {
+		RSGCore.Function.Progressbar("search_vault", "Stealing Gold", 10000, false, true, {
 			disableMovement = false,
 			disableCarMovement = false,
 			disableMouse = false,
@@ -150,14 +148,14 @@ RegisterNetEvent('rsg_casinovaultheist:client:checkvault', function()
 			vault1 = true
 		end)
 	else
-		exports['qbr-core']:Notify(9, 'already looted this vault', 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+		RSGCore.Functions.NotifyV2(9, 'Already looted this vault', 5000, 'top-right', 'error', 'circle-xmark', '#e60000')
 	end
 end)
 
 ------------------------------------------------------------------------------------------------------------------------
 
 Citizen.CreateThread(function()
-	exports['qbr-core']:createPrompt('vault2', vector3(2866.55, -1399.98, 53.21), 0xF3830D8E, 'Loot Desk', {
+	RSGCore.Function.createPrompt('vault2', vector3(2866.55, -1399.98, 53.21), 0xF3830D8E, 'Loot Desk', {
 		type = 'client',
 		event = 'rsg_casinovaultheist:client:checkvault1',
 		args = {},
@@ -169,7 +167,7 @@ RegisterNetEvent('rsg_casinovaultheist:client:checkvault1', function()
 	local player = PlayerPedId()
 	SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
 	if vault2 == false then
-		exports['qbr-core']:Progressbar("search_desk", "Stealing Money", 10000, false, true, {
+		RSGCore.Function.Progressbar("search_desk", "Stealing Money", 10000, false, true, {
 			disableMovement = false,
 			disableCarMovement = false,
 			disableMouse = false,
@@ -185,14 +183,14 @@ RegisterNetEvent('rsg_casinovaultheist:client:checkvault1', function()
 			vault2 = true
 		end)
 	else
-		exports['qbr-core']:Notify(9, 'already looted this desk', 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+		RSGCore.Functions.NotifyV2(9, 'Already looted this desk', 5000, 'top-right', 'error', 'circle-xmark', '#e60000')
 	end
 end)
 
 ------------------------------------------------------------------------------------------------------------------------
 
 Citizen.CreateThread(function()
-	exports['qbr-core']:createPrompt('vault3', vector3(2864.8, -1398.55, 52.48), 0xF3830D8E, 'Loot Table', {
+	RSGCore.Function.createPrompt('vault3', vector3(2864.8, -1398.55, 52.48), 0xF3830D8E, 'Loot Table', {
 		type = 'client',
 		event = 'rsg_casinovaultheist:client:checkvault2',
 		args = {},
@@ -204,7 +202,7 @@ RegisterNetEvent('rsg_casinovaultheist:client:checkvault2', function()
 	local player = PlayerPedId()
 	SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
 	if vault3 == false then
-		exports['qbr-core']:Progressbar("search_table", "Stealing Nuggets", 10000, false, true, {
+		RSGCore.Function.Progressbar("search_table", "Stealing Nuggets", 10000, false, true, {
 			disableMovement = false,
 			disableCarMovement = false,
 			disableMouse = false,
@@ -220,7 +218,7 @@ RegisterNetEvent('rsg_casinovaultheist:client:checkvault2', function()
 			vault3 = true
 		end)
 	else
-		exports['qbr-core']:Notify(9, 'already looted this table', 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+		RSGCore.Functions.NotifyV2(9, 'Already looted this table', 5000, 'top-right', 'error', 'circle-xmark', '#e60000')
 	end
 end)
 
